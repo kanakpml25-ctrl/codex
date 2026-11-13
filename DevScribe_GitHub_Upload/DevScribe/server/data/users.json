@@ -1,0 +1,117 @@
+[
+  {
+    "id": "user-kanak",
+    "name": "Kanak",
+    "email": "kanak@devscribe.io",
+    "passwordHash": "$2a$10$LyOWLTldvhCQYTMzIgsp.uHgyKtX/oR3p0xekw4KAq87GoJAMnBR2",
+    "handle": "@kanak_codes",
+    "bio": "Software Engineer documenting scalable distributed systems, zero-dependency JavaScript internals, and modern CSS architecture.",
+    "avatar": "assets/kanak.jpg",
+    "role": "Lead Author",
+    "createdAt": "2026-10-15T10:00:00Z"
+  },
+  {
+    "id": "user-1794588232551",
+    "name": "Priya Sharma",
+    "email": "test_1794588232459@devscribe.io",
+    "passwordHash": "$2a$10$NAL0DlAzoKAUuIJgg7g1h.SK4cxLoB.IWFyccBt8QwhMiiUDSWGuu",
+    "handle": "@priya_sharma",
+    "bio": "Writer and developer on DevScribe.",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Priya%20Sharma",
+    "role": "Member",
+    "createdAt": "2026-11-13T16:43:52.551Z"
+  },
+  {
+    "id": "user-1794588712710",
+    "name": "Priya Sharma",
+    "email": "test_1794588712621@devscribe.io",
+    "passwordHash": "$2a$10$2Bbi4DuY7jlPY66iSn.JS.ZZ8RrIOBElcIEnu4V3sL.5FfC29Md5u",
+    "handle": "@priya_sharma",
+    "bio": "Writer and developer on DevScribe.",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Priya%20Sharma",
+    "role": "Member",
+    "createdAt": "2026-11-13T16:51:52.710Z"
+  },
+  {
+    "id": "user-1794588722667",
+    "name": "Priya Sharma",
+    "email": "test_1794588722579@devscribe.io",
+    "passwordHash": "$2a$10$GvcKnZZG0TMNhQy0G1JHjOcn93zq3Vdyk.EIv7JP2fla63ooZv51u",
+    "handle": "@priya_sharma",
+    "bio": "Writer and developer on DevScribe.",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Priya%20Sharma",
+    "role": "Member",
+    "createdAt": "2026-11-13T16:52:02.667Z"
+  },
+  {
+    "id": "user-1794588846487",
+    "name": "Priya Sharma",
+    "email": "test_1794588846411@devscribe.io",
+    "passwordHash": "$2a$10$tf5/ZlEUX2Fw8LTxkqsLPO3USAq0BwBkSMsBrutddZkZq0JdkdXhm",
+    "handle": "@priya_sharma",
+    "bio": "Writer and developer on DevScribe.",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Priya%20Sharma",
+    "role": "Member",
+    "createdAt": "2026-11-13T16:54:06.488Z"
+  },
+  {
+    "id": "user-1794589738189",
+    "name": "Priya Sharma",
+    "email": "priya_1794589738118@devscribe.io",
+    "passwordHash": "$2a$10$ZyH2ks8VL1G2BpqaVDX.v.3SyCxi3PgXUAfH95JlLWuY3C/uNs0Fe",
+    "handle": "@priya_sharma",
+    "bio": "Author on DevScribe.",
+    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
+    "isVerified": true,
+    "role": "Author",
+    "createdAt": "2026-11-13T17:08:58.189Z"
+  },
+  {
+    "id": "user-1794591493740",
+    "name": "Priya Sharma",
+    "email": "priya_1794591493662@devscribe.io",
+    "passwordHash": "$2a$10$wlz2bPQD1JbR6crQbbMt1OgIJv9xISWJ8Uir.2T51aOBvfAzbd/YW",
+    "handle": "@priya_sharma",
+    "bio": "Author on DevScribe.",
+    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
+    "isVerified": true,
+    "role": "Author",
+    "createdAt": "2026-11-13T17:38:13.740Z"
+  },
+  {
+    "id": "user-1794591569435",
+    "name": "Priya Sharma",
+    "email": "priya_1794591569366@devscribe.io",
+    "passwordHash": "$2a$10$FYxhJqPU3o73MaxZtpNXbeIYve.yXUW7Xt9EhBhU0l.ZpuDocsBoW",
+    "handle": "@priya_sharma",
+    "bio": "Author on DevScribe.",
+    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
+    "isVerified": true,
+    "role": "Author",
+    "createdAt": "2026-11-13T17:39:29.435Z"
+  },
+  {
+    "id": "user-1794593236405",
+    "name": "Priya Sharma",
+    "email": "priya_1794593236327@devscribe.io",
+    "passwordHash": "$2a$10$AD7PMxE/u6SUoUNnyact9eIJmx2WjHdnaSFqBUZiEP9cwMQ.shFFm",
+    "handle": "@priya_sharma",
+    "bio": "Author on DevScribe.",
+    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
+    "isVerified": true,
+    "role": "Author",
+    "createdAt": "2026-11-13T18:07:16.405Z"
+  },
+  {
+    "id": "user-1794593518445",
+    "name": "Priya Sharma",
+    "email": "priya_1794593518384@devscribe.io",
+    "passwordHash": "$2a$10$jozh4luDSNt7v6tW30PWZetosJkS8BpS1Wvy247Fm/k3bK9uDnF1y",
+    "handle": "@priya_sharma",
+    "bio": "Author on DevScribe.",
+    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
+    "isVerified": true,
+    "role": "Author",
+    "createdAt": "2026-11-13T18:11:58.445Z"
+  }
+]

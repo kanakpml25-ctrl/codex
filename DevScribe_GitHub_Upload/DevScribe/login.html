@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="DevScribe by Kanak - Author Portal Sign In" />
+  <title>Sign In &bull; DevScribe by Kanak</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+</head>
+<body>
+
+  <!-- Top Progress Bar -->
+  <div id="reading-progress-bar"></div>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-wrapper">
+        <div class="brand-logo-icon">
+          <span>DS</span>
+        </div>
+        <div class="brand-title-group">
+          <h2>DevScribe <span class="brand-badge">PRO</span></h2>
+          <span class="brand-tagline">Author Portal</span>
+        </div>
+      </a>
+
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+        <li><a href="create-blog.html" class="nav-link">Write</a></li>
+        <li><a href="login.html" class="nav-link active">Sign In</a></li>
+      </ul>
+
+      <div class="nav-controls">
+        <button id="theme-toggle-btn" class="theme-select-btn">
+          <span>🌑 Obsidian</span>
+        </button>
+        <button id="mobile-menu-toggle" class="mobile-toggle-btn">&#9776;</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Login Main -->
+  <main class="main-content">
+    <div class="container auth-wrapper">
+      <div class="auth-card-container">
+        
+        <!-- Left Side: Kanak's Showcase Banner -->
+        <div class="auth-banner">
+          <div>
+            <span class="badge badge-emerald" style="margin-bottom: 1rem;">Verified Author</span>
+            <h2 style="font-size: 1.85rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.85rem;">
+              Welcome to DevScribe
+            </h2>
+            <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+              Publish technical post-mortems, edit system architecture designs, and analyze reader interactions.
+            </p>
+
+            <div class="auth-banner-quote">
+              <p>"Good code documents itself. Great architecture explains why the code exists."</p>
+              <div class="auth-banner-author">
+                <img src="assets/kanak.jpg" alt="Kanak" class="auth-banner-avatar" onerror="this.src='assets/kanak.jpg'; this.onerror=null;" />
+                <div>
+                  <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-main);">Kanak</div>
+                  <div style="font-size: 0.78rem; color: var(--accent-primary);">Author &amp; Systems Engineer</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="font-size: 0.8rem; color: var(--text-muted);">
+            DevScribe &bull; Author Portal
+          </div>
+        </div>
+
+        <!-- Right Side: Login Form -->
+        <div class="auth-form-panel">
+          <div class="auth-form-header">
+            <h1>Author Sign In</h1>
+            <p>Access your dashboard or <a href="register.html">create reader credentials</a></p>
+          </div>
+
+          <!-- Quick Fill Button for Kanak -->
+          <button type="button" class="demo-pill-btn" onclick="fillKanakCredentials()">
+            <span>⚡ Click to Fill Kanak's Author Credentials</span>
+          </button>
+
+          <form id="login-form" novalidate>
+            <!-- Email -->
+            <div class="form-group" id="login-email-group">
+              <label for="login-email" class="form-label">Email Address</label>
+              <input 
+                type="email" 
+                id="login-email" 
+                class="form-control" 
+                placeholder="kanak@devscribe.io" 
+                required 
+                autocomplete="email"
+              />
+              <span class="form-error"></span>
+            </div>
+
+            <!-- Password with Show/Hide toggle -->
+            <div class="form-group" id="login-password-group">
+              <div class="form-label">
+                <label for="login-password">Password</label>
+                <a href="#" onclick="showToast('Password reset token dispatched.', 'info'); return false;" style="font-size: 0.82rem;">Forgot password?</a>
+              </div>
+              <div class="input-with-icon">
+                <input 
+                  type="password" 
+                  id="login-password" 
+                  class="form-control" 
+                  placeholder="Enter author password" 
+                  required 
+                  autocomplete="current-password"
+                />
+                <button type="button" class="input-icon-btn toggle-password-btn" data-target="login-password" aria-label="Toggle password visibility">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </button>
+              </div>
+              <span class="form-error"></span>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-size: 1rem; margin-top: 1rem;">
+              <span>Sign In to Dashboard &rarr;</span>
+            </button>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="toast-container" aria-live="polite"></div>
+
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="DevScribe by Kanak - Write and Publish Technical Articles" />
+  <title>Write Story &bull; DevScribe by Kanak</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/editor.css" />
+</head>
+<body>
+
+  <!-- Top Progress Bar -->
+  <div id="reading-progress-bar"></div>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-wrapper">
+        <div class="brand-logo-icon">
+          <span>DS</span>
+        </div>
+        <div class="brand-title-group">
+          <h2>DevScribe <span class="brand-badge">PRO</span></h2>
+          <span class="brand-tagline">Studio Editor</span>
+        </div>
+      </a>
+
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+        <li><a href="create-blog.html" class="nav-link active">Write</a></li>
+        <li><a href="login.html" class="nav-link">Sign In</a></li>
+      </ul>
+
+      <div class="nav-controls">
+        <button id="theme-toggle-btn" class="theme-select-btn">
+          <span>🌑 Obsidian</span>
+        </button>
+        <button id="mobile-menu-toggle" class="mobile-toggle-btn">&#9776;</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Editor Main Content -->
+  <main class="main-content">
+    <div class="container">
+
+      <!-- Header Action Bar -->
+      <div class="editor-header-bar">
+        <div>
+          <h1 id="editor-main-heading">Draft an Engineering Story</h1>
+          <p style="font-size: 0.9rem; color: var(--text-secondary);">
+            Write with live Markdown rendering, tag chips, and instant preview.
+          </p>
+        </div>
+        <div class="editor-header-actions">
+          <button type="button" class="btn btn-secondary" onclick="handleSaveStory('draft')">
+            <span>💾 Save Draft</span>
+          </button>
+          <button type="button" id="btn-publish" class="btn btn-primary" onclick="handleSaveStory('published')">
+            <span>🚀 Publish Story</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Split Layout -->
+      <div class="editor-layout-grid">
+
+        <!-- Left Column: Title, Toolbar, Markdown Textarea & Preview -->
+        <div class="editor-main-panel">
+          <input 
+            type="text" 
+            id="story-title" 
+            class="title-input-large" 
+            placeholder="Technical story title..." 
+            autocomplete="off" 
+            required 
+          />
+
+          <!-- Formatting Toolbar -->
+          <div class="markdown-toolbar">
+            <button type="button" class="tool-action-btn" data-action="bold" title="Bold (**text**)"><strong>B</strong></button>
+            <button type="button" class="tool-action-btn" data-action="italic" title="Italic (*text*)"><em>I</em></button>
+            <div class="toolbar-sep"></div>
+            <button type="button" class="tool-action-btn" data-action="h2" title="Heading 2 (## Title)">H2</button>
+            <button type="button" class="tool-action-btn" data-action="h3" title="Heading 3 (### Title)">H3</button>
+            <div class="toolbar-sep"></div>
+            <button type="button" class="tool-action-btn" data-action="code" title="Code Block (```)">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            </button>
+            <button type="button" class="tool-action-btn" data-action="quote" title="Quote (> Quote)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"></path><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"></path></svg>
+            </button>
+            <button type="button" class="tool-action-btn" data-action="link" title="Link ([text](url))">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+            </button>
+            <button type="button" class="tool-action-btn" data-action="list" title="List (- Item)">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+            </button>
+
+            <!-- Mode Tabs -->
+            <div class="view-mode-tabs">
+              <button type="button" id="mode-write-btn" class="tab-toggle-pill active">Write</button>
+              <button type="button" id="mode-preview-btn" class="tab-toggle-pill">Live Preview</button>
+            </div>
+          </div>
+
+          <!-- Content Panes -->
+          <div class="editor-panes-box">
+            <textarea 
+              id="editor-textarea" 
+              class="editor-textarea-main" 
+              placeholder="Write in Markdown... Format with ## Headings, code snippets with ```javascript, quotes with >, and bullet points."
+            ></textarea>
+            <div id="editor-preview-pane" class="editor-preview-pane article-content-body"></div>
+          </div>
+
+          <!-- Live Status Bar -->
+          <div class="editor-status-bar">
+            <div>
+              <strong id="word-count-display" style="color: var(--text-main);">0 words</strong> &bull; 
+              <span id="read-time-display">1 min read</span>
+            </div>
+            <div style="font-size: 0.78rem;">Markdown Enabled &bull; DevScribe by Kanak</div>
+          </div>
+        </div>
+
+        <!-- Right Column: Sidebar Metadata -->
+        <aside class="editor-sidebar-panel">
+          <!-- Category -->
+          <div class="form-group">
+            <label for="story-category" class="form-label">Category</label>
+            <select id="story-category" class="form-control">
+              <option value="Architecture">Architecture</option>
+              <option value="System Design">System Design</option>
+              <option value="Modern CSS">Modern CSS</option>
+              <option value="Deep Dives">Deep Dives</option>
+              <option value="General Engineering">General Engineering</option>
+            </select>
+          </div>
+
+          <!-- Dynamic Tags -->
+          <div class="form-group">
+            <label class="form-label">
+              <span>Tags</span>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">Enter or comma</span>
+            </label>
+            <div class="tag-input-wrap" id="tag-chips-wrap">
+              <input type="text" id="tag-input-field" class="tag-field-raw" placeholder="Add tag..." />
+            </div>
+          </div>
+
+          <!-- Excerpt -->
+          <div class="form-group">
+            <label for="story-excerpt" class="form-label">
+              <span>Summary / Teaser</span>
+            </label>
+            <textarea id="story-excerpt" class="form-control" rows="3" placeholder="Brief technical summary shown on the home feed..."></textarea>
+          </div>
+
+          <!-- Cover Image -->
+          <div class="form-group">
+            <label for="story-cover-url" class="form-label">Featured Cover Image</label>
+            <input type="url" id="story-cover-url" class="form-control" placeholder="Paste image URL..." />
+            
+            <div style="display: flex; gap: 0.35rem; margin-top: 0.4rem;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="applyCoverPreset('architecture')" style="font-size: 0.74rem;">Preset: Architecture</button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="applyCoverPreset('system')" style="font-size: 0.74rem;">Preset: System</button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="applyCoverPreset('css')" style="font-size: 0.74rem;">Preset: CSS</button>
+            </div>
+
+            <!-- Preview Card -->
+            <div class="cover-preview-card">
+              <img id="cover-preview-img" alt="Cover preview" />
+              <div id="cover-empty-msg" class="cover-empty-msg">
+                <p>Image preview will render here</p>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+
+    </div>
+  </main>
+
+  <div id="toast-container" aria-live="polite"></div>
+
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/editor.js"></script>
+</body>
+</html>
