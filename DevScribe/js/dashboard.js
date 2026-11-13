@@ -1,18 +1,43 @@
 /**
- * Kanak's DevChronicle - Dashboard Logic (dashboard.js)
- * Author Metrics, Tab Filters, Story Management Table, and Delete Modal.
+ * DevScribe by Kanak - Dashboard Logic (dashboard.js)
+ * Connected to Node.js / Express.js REST API for Author Analytics & Story Management.
+ * Protects route: redirects to login.html if not authenticated.
  */
 
 let activeDashboardTab = "all";
 let storyPendingDeleteId = null;
 
-document.addEventListener("DOMContentLoaded", () => {
-  renderDashboard();
+document.addEventListener("DOMContentLoaded", async () => {
+  const user = Storage.getUser();
+  if (!user) {
+    showToast("Please sign in to access your author dashboard.", "info");
+    setTimeout(() => {
+      window.location.href = "login.html";
+    }, 400);
+    return;
+  }
+
   setupDashboardTabs();
+  await loadDashboardData();
 });
+
+async function loadDashboardData() {
+  try {
+    const apiPosts = await Api.getPosts();
+    if (Array.isArray(apiPosts) && apiPosts.length > 0) {
+      Storage.saveStories(apiPosts);
+    }
+  } catch (err) {
+    console.warn("Using local stories in dashboard:", err.message);
+  }
+
+  renderDashboard();
+}
 
 function renderDashboard() {
   const user = Storage.getUser();
+  if (!user) return;
+
   const stories = Storage.getStories();
 
   renderAuthorBanner(user);
@@ -25,11 +50,13 @@ function renderAuthorBanner(user) {
   const nameEl = document.getElementById("dash-author-name");
   const handleEl = document.getElementById("dash-author-handle");
   const bioEl = document.getElementById("dash-author-bio");
+  const headingEl = document.getElementById("dash-stories-heading");
 
   if (avatarImg) avatarImg.src = user.avatar || "assets/kanak.jpg";
-  if (nameEl) nameEl.textContent = user.name || "Kanak";
-  if (handleEl) handleEl.textContent = user.handle || "@kanak_codes";
-  if (bioEl) bioEl.textContent = user.bio || "Full Stack Software Engineer & Technical Writer.";
+  if (nameEl) nameEl.innerHTML = `${user.name} <span class="badge badge-emerald">${user.role || 'Verified Author'}</span>`;
+  if (handleEl) handleEl.textContent = user.handle || `@${user.name.toLowerCase().replace(/\s+/g, '_')}`;
+  if (bioEl) bioEl.textContent = user.bio || "Author and developer on DevScribe.";
+  if (headingEl) headingEl.textContent = `${user.name}'s Published Stories & Drafts`;
 }
 
 function renderMetrics(stories) {
@@ -47,6 +74,17 @@ function renderMetrics(stories) {
   document.getElementById("stat-total-comments").textContent = totalComments.toLocaleString();
 }
 
+function setupDashboardTabs() {
+  document.querySelectorAll(".dash-tab-btn, .tab-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".dash-tab-btn, .tab-btn").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      activeDashboardTab = btn.getAttribute("data-tab");
+      renderStoriesTable(Storage.getStories());
+    });
+  });
+}
+
 function renderStoriesTable(stories) {
   const tbody = document.getElementById("stories-table-body");
   if (!tbody) return;
@@ -61,100 +99,94 @@ function renderStoriesTable(stories) {
   if (filtered.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="5" style="text-align: center; padding: 3rem 1rem;">
-          <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem;">
-            No ${activeDashboardTab === 'all' ? '' : activeDashboardTab} stories found.
-          </p>
-          <a href="create-blog.html" class="btn btn-primary btn-sm">+ Draft a New Story</a>
+        <td colspan="6" style="text-align: center; padding: 3rem 1rem; color: var(--text-muted);">
+          No stories found in this section. <a href="create-blog.html" style="color: var(--accent-primary); font-weight: 600;">Write one now &rarr;</a>
         </td>
       </tr>
     `;
     return;
   }
 
-  tbody.innerHTML = filtered
-    .map((story) => {
-      const isDraft = story.status === "draft";
-      const statusBadge = isDraft
-        ? `<span class="badge badge-amber">Draft</span>`
-        : `<span class="badge badge-emerald">Published</span>`;
+  tbody.innerHTML = filtered.map((story) => {
+    const rx = story.reactions || {};
+    const totalRx = (rx.fire || 0) + (rx.insight || 0) + (rx.shipped || 0) + (rx.relatable || 0);
+    const commentCount = (story.comments && story.comments.length) || 0;
+    const isPub = story.status === "published";
 
-      const rx = story.reactions || {};
-      const reactionTotal = (rx.fire || 0) + (rx.insight || 0) + (rx.shipped || 0) + (rx.relatable || 0);
-
-      return `
-        <tr id="row-${story.id}">
-          <td>
-            <div class="table-story-cell">
-              <img src="${story.coverImage || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1100&q=80'}" alt="${story.title}" class="table-story-thumb" />
-              <div>
-                <a href="index.html" class="table-story-title">${story.title}</a>
-                <div style="font-size: 0.78rem; color: var(--text-muted);">
-                  ${story.category || 'Tech'} &bull; ${formatDate(story.createdAt)}
-                </div>
-              </div>
-            </div>
-          </td>
-          <td>${statusBadge}</td>
-          <td>
-            <strong style="color: var(--text-main);">${(story.views || 0).toLocaleString()}</strong>
-            <span style="font-size: 0.78rem; color: var(--text-muted);"> reads</span>
-          </td>
-          <td>
-            <span style="font-weight: 700; color: var(--accent-primary);">⚡ ${reactionTotal}</span>
-            <span style="color: var(--text-muted); font-size: 0.78rem; margin-left: 0.4rem;">💬 ${(story.comments && story.comments.length) || 0}</span>
-          </td>
-          <td>
-            <div class="table-actions-cluster">
-              <a href="create-blog.html?edit=${story.id}" class="action-btn-icon" title="Edit Story">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-              </a>
-              <button class="action-btn-icon delete-btn" onclick="openDeleteDialog('${story.id}')" title="Delete Story">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-              </button>
-            </div>
-          </td>
-        </tr>
-      `;
-    })
-    .join("");
+    return `
+      <tr>
+        <td>
+          <div style="font-weight: 700; color: var(--text-main); font-size: 0.95rem; margin-bottom: 0.2rem;">
+            ${story.title}
+          </div>
+          <div style="font-size: 0.78rem; color: var(--text-muted);">
+            Category: <span style="color: var(--text-secondary);">${story.category || 'General'}</span> &bull; 
+            Author: <span style="color: var(--accent-primary); font-weight: 600;">${story.author ? story.author.name : 'Author'}</span> &bull; 
+            ${story.readTime || '3 min'}
+          </div>
+        </td>
+        <td>
+          <span class="badge ${isPub ? 'badge-emerald' : 'badge-amber'}">
+            ${isPub ? 'Published' : 'Draft'}
+          </span>
+        </td>
+        <td style="color: var(--text-secondary); font-size: 0.88rem;">
+          ${(story.views || 0).toLocaleString()}
+        </td>
+        <td style="color: var(--accent-primary); font-weight: 600; font-size: 0.88rem;">
+          🔥 ${totalRx} &bull; 💬 ${commentCount}
+        </td>
+        <td style="color: var(--text-muted); font-size: 0.82rem;">
+          ${formatDate(story.createdAt)}
+        </td>
+        <td>
+          <div class="row-actions">
+            <a href="create-blog.html?id=${story.id}" class="action-btn" title="Edit Story">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            </a>
+            <button class="action-btn btn-danger-action" title="Delete Story" onclick="openDeleteDialog('${story.id}')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            </button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join("");
 }
 
-function setupDashboardTabs() {
-  document.querySelectorAll(".dash-tab-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".dash-tab-btn").forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      activeDashboardTab = btn.getAttribute("data-tab");
-      renderStoriesTable(Storage.getStories());
-    });
-  });
-}
-
-// Delete Dialog
-function openDeleteDialog(storyId) {
+// ============================================================================
+// Delete Confirmation Dialog Logic (Connected to DELETE /api/posts/:id)
+// ============================================================================
+window.openDeleteDialog = function (storyId) {
   storyPendingDeleteId = storyId;
   const story = Storage.getStoryById(storyId);
   if (!story) return;
 
-  const titleEl = document.getElementById("delete-story-name");
-  if (titleEl) titleEl.textContent = `"${story.title}"`;
-
   const modal = document.getElementById("delete-modal");
-  if (modal) modal.classList.add("active");
-}
+  const nameEl = document.getElementById("delete-story-name");
 
-function closeDeleteDialog() {
+  if (nameEl) nameEl.textContent = `"${story.title}"`;
+  if (modal) modal.classList.add("active");
+};
+
+window.closeDeleteDialog = function () {
+  storyPendingDeleteId = null;
   const modal = document.getElementById("delete-modal");
   if (modal) modal.classList.remove("active");
-  storyPendingDeleteId = null;
-}
+};
 
-function confirmDeleteStory() {
+window.confirmDeleteStory = async function () {
   if (!storyPendingDeleteId) return;
+
+  try {
+    await Api.deletePost(storyPendingDeleteId);
+    showToast("Story deleted from database.", "info");
+  } catch (err) {
+    console.warn("API delete failed, removing locally:", err.message);
+    showToast("Story deleted.", "info");
+  }
 
   Storage.deleteStory(storyPendingDeleteId);
   closeDeleteDialog();
-  showToast("Story deleted from journal.", "info");
   renderDashboard();
-}
+};

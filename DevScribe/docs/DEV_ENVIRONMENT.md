@@ -1,95 +1,127 @@
-# Local Development Environment Setup Guide
+# Local Development & Backend Environment Guide
 
-This guide walks you through setting up, inspecting, and running your local development environment for the **TechPulse Blog Application**.
+This guide walks you through setting up, inspecting, testing, and running your local development environment for the **DevScribe Full-Stack Application** by **Kanak**.
 
 ---
 
 ## 1. Project Overview & Folder Structure
 
 ```
-codex-project/
-├── index.html              # Home Page (Featured blog, category filters, search, article modal)
-├── login.html              # Login Page (Client-side authentication & demo autofill)
-├── register.html           # Register Page (Form validation & password strength meter)
-├── dashboard.html          # Dashboard Page (User post management, analytics, delete modals)
-├── create-blog.html        # Create Blog Page (Markdown editor, live split preview, tags)
+DevScribe/
+├── assets/
+│   └── kanak.jpg                # Kanak's official profile photograph
 ├── css/
-│   ├── style.css           # Global theme variables, reset, navbar, footer, buttons, toasts
-│   ├── home.css            # Home specific styles (Hero, filter chips, blog grid)
-│   ├── auth.css            # Auth forms, visual side banner, strength meter
-│   ├── dashboard.css       # Metrics cards, post tables, empty states
-│   └── editor.css          # Markdown editor, preview pane, tag pills
+│   ├── style.css                # Global design system, theme variables, reset, navbar, toasts
+│   ├── home.css                 # Home spotlight, reaction matrix, category filter chips
+│   ├── auth.css                 # Login/Register cards, password strength meter
+│   ├── dashboard.css            # Analytics metrics cards, story tables, action clusters
+│   └── editor.css               # Split-screen markdown editor & preview pane
 ├── js/
-│   ├── app.js              # Global state, LocalStorage database, session auth, theme toggle
-│   ├── home.js             # Live search, category filtering, likes, reader modal
-│   ├── auth.js             # Login/register validation, session persistence
-│   ├── dashboard.js        # Post CRUD operations, user metrics, modal controls
-│   └── editor.js           # Markdown parser, live preview, word counter, draft/publish
+│   ├── api.js                   # REST API client bridge with live backend health monitor
+│   ├── app.js                   # Global state, theme engine, speech synthesizer
+│   ├── home.js                  # Search, category filter, reactions, comments (API connected)
+│   ├── auth.js                  # Form validation, JWT session handling (API connected)
+│   ├── dashboard.js             # Metrics calculation, story management, delete modal (API connected)
+│   └── editor.js                # Markdown studio, tag chips, word counter, publish/draft (API connected)
+├── server/
+│   ├── config/db.js             # Persistent JSON file database engine (Users & Posts)
+│   ├── controllers/
+│   │   ├── authController.js    # Register (bcrypt), Login (JWT), getMe
+│   │   └── postController.js    # Create blog, get blogs, update, delete, reactions, comments
+│   ├── middleware/
+│   │   └── authMiddleware.js    # JWT verification middleware
+│   ├── routes/
+│   │   ├── authRoutes.js        # /api/auth/register, /api/auth/login, /api/auth/me
+│   │   └── postRoutes.js        # /api/posts, /api/posts/:id, /react, /comments
+│   ├── data/
+│   │   ├── users.json           # User database store
+│   │   └── posts.json           # Articles database store
+│   ├── test-api.js              # Automated 10-point backend API test suite
+│   └── server.js                # Express app entry point & static file server (port 5000)
 ├── docs/
-│   ├── HTML_CSS_JS_GUIDE.md# Educational manual covering HTML, CSS & JS
-│   └── DEV_ENVIRONMENT.md  # This local setup guide
-├── serve.ps1               # Built-in lightweight local HTTP server (PowerShell)
-├── start.bat               # 1-Click launcher to start server & open browser
-└── README.md               # Main project documentation
+│   ├── HTML_CSS_JS_GUIDE.md     # Learning manual for HTML5, CSS3, & JavaScript
+│   └── DEV_ENVIRONMENT.md       # This local setup and backend guide
+├── index.html                   # Home Page
+├── login.html                   # Login Page
+├── register.html                # Register Page
+├── dashboard.html               # Author Dashboard
+├── create-blog.html             # Studio Markdown Editor
+├── package.json                 # Node.js project manifest & scripts
+├── .env.example                 # Environment variables template
+├── start.bat                    # 1-Click launcher
+└── serve.ps1                    # Pure PowerShell static server alternative
 ```
 
 ---
 
-## 2. Running the Application Locally
+## 2. Running the Full-Stack Application Locally
 
-You have two simple ways to view and run the application:
+### Method A: 1-Click Launcher (Recommended for Windows)
+Double-click `start.bat` in the project folder.
+- Automatically checks for Node.js in the system PATH and `%LOCALAPPDATA%\Programs\nodejs`.
+- Launches the Express backend server at `http://localhost:5000`.
+- Automatically opens your default web browser to `http://localhost:5000`.
 
-### Option A: 1-Click Launcher (Recommended)
-Simply double-click `start.bat` in the project folder, or run the following in PowerShell:
+### Method B: Terminal / Command Prompt / PowerShell
+Open PowerShell or Terminal in the project directory:
 ```powershell
-.\serve.ps1
+# 1. Install dependencies
+npm install
+
+# 2. Run the Express backend server
+npm start
 ```
-This starts an instant local web server at `http://localhost:8080/` and opens your default browser automatically. It uses PowerShell's built-in `.NET HttpListener`, requiring **no third-party dependencies** (no Node.js or Python required!).
+The server will start listening at `http://localhost:5000`.
+- **Application URL**: `http://localhost:5000/`
+- **REST APIs**: `http://localhost:5000/api`
+- **Health Check**: `http://localhost:5000/api/health`
 
-### Option B: Direct Browser Opening
-Because all assets, styles, and scripts use standard relative paths:
-1. Double-click `index.html` in Windows File Explorer.
-2. It will open directly in Microsoft Edge, Google Chrome, or any modern web browser via `file://`.
-3. All `localStorage` interactions, searches, theme toggles, and modals will function seamlessly!
-
----
-
-## 3. Recommended Code Editors & Extensions
-
-For the best developer experience, we recommend **Visual Studio Code**:
-
-1. **Live Server Extension (by Ritwick Dey)**:
-   - Provides live reloading when saving HTML/CSS/JS files.
-   - Right-click `index.html` > *Open with Live Server*.
-2. **Prettier - Code Formatter**:
-   - Automatically formats HTML, CSS, and JS code neatly.
-3. **Auto Rename Tag**:
-   - Automatically renames paired HTML tags.
-
----
-
-## 4. Using Browser Developer Tools (F12)
-
-Every modern browser includes built-in DevTools to test, debug, and inspect your code:
-
-1. **Inspect Elements (Ctrl+Shift+C / F12)**:
-   - View HTML structure and inspect computed CSS rules in real time.
-2. **Device Emulation (Ctrl+Shift+M)**:
-   - Test responsive design on iPhone, iPad, and desktop viewports.
-3. **Console Tab**:
-   - Inspect JavaScript `console.log()` statements and errors.
-4. **Application / Storage Tab**:
-   - Go to **Application** > **Local Storage** > `http://localhost:8080` to inspect:
-     - `techpulse_posts`: The JSON array of all blog posts.
-     - `techpulse_user`: The currently logged-in user profile.
-     - `techpulse_theme`: The active color theme (`light` or `dark`).
+### Method C: Running the Automated Test Suite
+To verify all REST API endpoints before deployment or grading:
+```powershell
+npm test
+```
+This runs `server/test-api.js`, which executes 10 end-to-end integration tests:
+1. `GET /api/health` — Server health check
+2. `POST /api/auth/register` — User registration with bcrypt hashing
+3. `POST /api/auth/register` (Duplicate) — Conflict validation (HTTP 409)
+4. `POST /api/auth/login` — Authentication and JWT token issuance
+5. `POST /api/auth/login` (Kanak Demo) — Pre-seeded author login verification
+6. `POST /api/posts` — Create Blog API with slug generation and author linking
+7. `GET /api/posts` — Retrieve all posts with category filtering
+8. `POST /api/posts/:id/react` — Multi-reaction counter update
+9. `POST /api/posts/:id/comments` — Community comment submission
+10. `DELETE /api/posts/:id` — Blog post deletion
 
 ---
 
-## 5. Testing & Grading Checklist
+## 3. Frontend-to-Backend Architecture
 
-- [x] **Home (`index.html`)**: View cards, filter categories, search live, open reader modal, toggle theme.
-- [x] **Login (`login.html`)**: Click "Quick Demo Account" to auto-fill credentials, log in with redirection.
-- [x] **Register (`register.html`)**: Check password strength feedback and create a fresh user.
-- [x] **Dashboard (`dashboard.html`)**: View user stats, manage posts, delete or edit existing blogs.
-- [x] **Create Blog (`create-blog.html`)**: Use markdown editor, preview post in real time, add tags, and publish.
+The frontend communicates with the backend via `js/api.js`:
+- **Auto-Discovery**: On page load, `api.js` performs a background check to `http://localhost:5000/api/health`.
+- **Live Indicator**: When connected, a glowing status badge (`🟢 Backend API Connected`) appears in the top navigation bar.
+- **JWT Storage**: When a user registers or logs in, the returned JWT token is stored in `localStorage` under `devscribe_token`. All subsequent authenticated requests automatically pass the `Authorization: Bearer <token>` header.
+- **Seamless Local Fallback**: If the server is offline or unreachable, the application gracefully falls back to local browser storage, ensuring uninterrupted evaluation and demonstration.
+
+---
+
+## 4. Browser Developer Tools (F12) Tips
+
+1. **Console Tab**:
+   - Inspect network logs and API request/response outputs prefixed with `[DevScribe API]`.
+2. **Network Tab**:
+   - Filter by `Fetch/XHR` to inspect live HTTP calls to `/api/auth/login`, `/api/auth/register`, `/api/posts`, etc.
+   - Verify request payload, response status codes (`200`, `201`, `400`, `401`), and JSON responses.
+3. **Application / Storage Tab**:
+   - Inspect `localStorage`:
+     - `devscribe_token`: Active JWT authentication token.
+     - `devscribe_user`: Current logged-in user profile object.
+     - `devscribe_theme`: Active editorial color theme (`cosmic-obsidian`, `warm-parchment`, `cyber-aurora`).
+
+---
+
+## 5. Pre-Seeded Author Account
+
+- **Email**: `kanak@devscribe.io`
+- **Password**: `password123`
+- **Role**: Lead Architect & Author

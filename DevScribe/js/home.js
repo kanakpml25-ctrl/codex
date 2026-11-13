@@ -1,18 +1,32 @@
 /**
  * DevScribe by Kanak - Home Page Logic (home.js)
- * Hero Spotlight, Reactions, Search, Reader Modal & Safe Audio Synthesis.
+ * Connected to Node.js / Express.js REST API for fetching stories, reactions, and comments.
  */
 
 let activeCategory = "All";
 let searchFilter = "";
 let currentOpenStoryId = null;
 
-document.addEventListener("DOMContentLoaded", () => {
-  renderHomeFeed();
+document.addEventListener("DOMContentLoaded", async () => {
   setupFilterChips();
   setupLiveSearch();
   setupModalBackdrop();
+  await loadAndRenderFeed();
 });
+
+async function loadAndRenderFeed() {
+  try {
+    // Attempt fetch from Express REST API
+    const apiPosts = await Api.getPosts();
+    if (Array.isArray(apiPosts) && apiPosts.length > 0) {
+      Storage.saveStories(apiPosts);
+    }
+  } catch (err) {
+    console.warn("Using offline cached stories:", err.message);
+  }
+
+  renderHomeFeed();
+}
 
 function renderHomeFeed() {
   const allStories = Storage.getStories();
@@ -45,66 +59,132 @@ function renderHeroSpotlight(topStory) {
   const container = document.getElementById("hero-spotlight-container");
   if (!container || !topStory) return;
 
-  const author = Storage.getUser();
+  const currentUser = Storage.getUser();
 
-  container.innerHTML = `
-    <div class="hero-spotlight">
-      <div class="hero-grid">
-        <div class="hero-content-col">
-          <span class="hero-author-badge">
-            <span style="font-size: 0.9rem;">⚡</span> Engineering Journal &bull; Kanak
-          </span>
-          <h1 class="hero-headline">
-            Engineering <span>Resilient Systems</span> &amp; Modern Architecture.
-          </h1>
-          <p class="hero-description">
-            Hi, I'm <strong>Kanak</strong>. I write technical deep-dives on zero-dependency JavaScript, scalable distributed systems, and modern CSS architecture.
-          </p>
-
-          <div class="hero-stats-row">
-            <div class="hero-stat-item">
-              <h3>14.5K</h3>
-              <p>Monthly Readers</p>
-            </div>
-            <div class="hero-stat-item">
-              <h3>Zero Fluff</h3>
-              <p>Technical Code</p>
-            </div>
-            <div class="hero-stat-item">
-              <h3>Open Source</h3>
-              <p>Architecture</p>
-            </div>
-          </div>
-
-          <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-            <button class="btn btn-primary btn-lg" onclick="openStoryReader('${topStory.id}')">
-              <span>Read Featured Story</span>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-            </button>
-            <a href="create-blog.html" class="btn btn-secondary btn-lg">Write a Story</a>
-          </div>
-        </div>
-
-        <div class="hero-profile-col">
-          <div class="hero-profile-card">
-            <div class="hero-avatar-frame">
-              <img src="${author.avatar || 'assets/kanak.jpg'}" alt="Kanak" class="hero-photo-img" onerror="this.src='kanak.jpg'; this.onerror=null;" />
-            </div>
-            <h3>${author.name}</h3>
-            <p>${author.handle} &bull; Software Engineer</p>
-            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
-              "Building high-performance systems and writing code that stands the test of time."
+  if (currentUser) {
+    // --- LOGGED-IN AUTHOR VIEW ---
+    container.innerHTML = `
+      <div class="hero-spotlight">
+        <div class="hero-grid">
+          <div class="hero-content-col">
+            <span class="hero-author-badge">
+              <span style="font-size: 0.9rem;">⚡</span> Welcome Back &bull; Active Author
+            </span>
+            <h1 class="hero-headline">
+              Ready to write, <span>${currentUser.name}</span>?
+            </h1>
+            <p class="hero-description">
+              You are signed in to your DevScribe author account. Publish technical deep-dives, track reader reactions, and inspect system architecture discussions.
             </p>
-            <div class="hero-social-links">
-              <a href="https://github.com/kanakpml25-ctrl" target="_blank" class="social-pill-link">GitHub</a>
-              <a href="dashboard.html" class="social-pill-link">Dashboard</a>
-              <a href="login.html" class="social-pill-link">Author Portal</a>
+
+            <div class="hero-stats-row">
+              <div class="hero-stat-item">
+                <h3>REST API</h3>
+                <p>Express Connected</p>
+              </div>
+              <div class="hero-stat-item">
+                <h3>Verified</h3>
+                <p>Active Profile</p>
+              </div>
+              <div class="hero-stat-item">
+                <h3>Studio</h3>
+                <p>Markdown Ready</p>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+              <a href="create-blog.html" class="btn btn-primary btn-lg">
+                <span>+ Write New Story</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </a>
+              <a href="dashboard.html" class="btn btn-secondary btn-lg">My Dashboard</a>
+            </div>
+          </div>
+
+          <div class="hero-profile-col">
+            <div class="hero-profile-card">
+              <div class="hero-avatar-frame">
+                <img src="${currentUser.avatar || 'assets/kanak.jpg'}" alt="${currentUser.name}" class="hero-photo-img" onerror="this.src='assets/kanak.jpg'; this.onerror=null;" />
+              </div>
+              <h3>${currentUser.name}</h3>
+              <p>${currentUser.handle || '@author'} &bull; Author</p>
+              <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
+                ${currentUser.bio || "Writer and developer documenting software architecture."}
+              </p>
+              <div class="hero-social-links">
+                <a href="dashboard.html" class="social-pill-link">Dashboard</a>
+                <a href="create-blog.html" class="social-pill-link">+ Write</a>
+                <a href="#" onclick="logoutUser(); return false;" class="social-pill-link" style="color: var(--color-danger);">Sign Out</a>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  `;
+    `;
+  } else {
+    // --- GUEST VIEW (Not logged in) ---
+    container.innerHTML = `
+      <div class="hero-spotlight">
+        <div class="hero-grid">
+          <div class="hero-content-col">
+            <span class="hero-author-badge">
+              <span style="font-size: 0.9rem;">⚡</span> DevScribe &bull; Engineering Publication
+            </span>
+            <h1 class="hero-headline">
+              Engineering <span>Resilient Systems</span> &amp; Modern Architecture.
+            </h1>
+            <p class="hero-description">
+              An open technical publication featuring deep-dives on zero-dependency JavaScript, scalable distributed systems, and modern CSS architecture.
+            </p>
+
+            <div class="hero-stats-row">
+              <div class="hero-stat-item">
+                <h3>14.5K</h3>
+                <p>Monthly Readers</p>
+              </div>
+              <div class="hero-stat-item">
+                <h3>REST API</h3>
+                <p>Express Backend</p>
+              </div>
+              <div class="hero-stat-item">
+                <h3>Open Source</h3>
+                <p>Architecture</p>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+              <a href="register.html" class="btn btn-primary btn-lg">
+                <span>Create Account &rarr;</span>
+              </a>
+              <a href="login.html" class="btn btn-secondary btn-lg">Sign In to Dashboard</a>
+            </div>
+          </div>
+
+          <div class="hero-profile-col">
+            <div class="hero-profile-card">
+              <span class="badge badge-emerald" style="margin-bottom: 0.75rem; align-self: flex-start;">Featured Story</span>
+              <h3 style="font-size: 1.2rem; line-height: 1.35; margin-bottom: 0.5rem; text-align: left;">
+                ${topStory.title}
+              </h3>
+              <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem; text-align: left; line-height: 1.5;">
+                ${topStory.excerpt}
+              </p>
+              <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border-color); padding-top: 0.85rem; width: 100%;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <img src="${topStory.author ? topStory.author.avatar : 'assets/kanak.jpg'}" alt="${topStory.author ? topStory.author.name : 'Author'}" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;" onerror="this.src='assets/kanak.jpg'; this.onerror=null;" />
+                  <div style="text-align: left;">
+                    <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-main);">${topStory.author ? topStory.author.name : 'Author'}</div>
+                    <div style="font-size: 0.7rem; color: var(--text-muted);">${topStory.readTime || '4 min read'}</div>
+                  </div>
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="openStoryReader('${topStory.id}')">Read &rarr;</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
 }
 
 function renderCardsGrid(stories) {
@@ -173,7 +253,7 @@ function renderCardsGrid(stories) {
     .join("");
 }
 
-function handleReaction(storyId, key, e) {
+async function handleReaction(storyId, key, e) {
   if (e) e.stopPropagation();
   const story = Storage.getStoryById(storyId);
   if (!story) return;
@@ -193,11 +273,18 @@ function handleReaction(storyId, key, e) {
 
   const icons = { fire: "🔥", insight: "💡", shipped: "🚀", relatable: "☕" };
   showToast(`Reaction noted: ${icons[key]}`, "success", 1500);
+
+  // Sync to Express API
+  try {
+    await Api.reactToPost(storyId, key);
+  } catch (err) {
+    // Log silently
+  }
 }
 
 function setupFilterChips() {
   document.querySelectorAll(".filter-chip-btn").forEach((chip) => {
-    chip.addEventListener("click", () => {
+    chip.addEventListener("click", async () => {
       document.querySelectorAll(".filter-chip-btn").forEach((c) => c.classList.remove("active"));
       chip.classList.add("active");
       activeCategory = chip.getAttribute("data-category");
@@ -228,7 +315,6 @@ function resetFilters() {
   renderHomeFeed();
 }
 
-// Reader Modal with Safe Audio Trigger
 function openStoryReader(storyId) {
   const story = Storage.getStoryById(storyId);
   if (!story) return;
@@ -241,7 +327,6 @@ function openStoryReader(storyId) {
   const modalBody = document.getElementById("reader-modal-body");
   if (!modal || !modalBody) return;
 
-  // Use global formatCustomMarkdown from app.js
   const parsedContent = formatCustomMarkdown(story.content || story.excerpt);
 
   modalBody.innerHTML = `
@@ -263,7 +348,6 @@ function openStoryReader(storyId) {
         </div>
       </div>
 
-      <!-- Safe Speech Synthesizer Bar (Passes story ID, zero syntax error bug!) -->
       <div class="reader-audio-bar">
         <div style="display: flex; align-items: center; gap: 0.75rem;">
           <button id="listen-audio-btn" class="audio-player-pill" onclick="handleStoryAudioById('${story.id}')">
@@ -352,7 +436,7 @@ function renderComments(comments) {
     .join("");
 }
 
-function handleCommentSubmit(e) {
+async function handleCommentSubmit(e) {
   e.preventDefault();
   if (!currentOpenStoryId) return;
 
@@ -364,17 +448,25 @@ function handleCommentSubmit(e) {
   if (!story) return;
 
   if (!story.comments) story.comments = [];
-  story.comments.push({
+  const newComment = {
     id: "c-" + Date.now(),
     author: author,
     text: text,
     date: new Date().toISOString()
-  });
-
+  };
+  story.comments.push(newComment);
   Storage.saveStory(story);
+
   document.getElementById("comment-body").value = "";
   document.getElementById("comments-container").innerHTML = renderComments(story.comments);
   showToast("Comment published! ✨", "success");
+
+  // Sync to Express API
+  try {
+    await Api.addComment(currentOpenStoryId, author, text);
+  } catch (err) {
+    // Handled silently
+  }
 }
 
 function copyShareableLink(id) {
@@ -385,3 +477,11 @@ function copyShareableLink(id) {
     showToast("Link: " + url, "info");
   });
 }
+
+// Window exports for inline HTML onclick handlers
+window.openStoryReader = openStoryReader;
+window.closeStoryReader = closeStoryReader;
+window.handleReaction = handleReaction;
+window.handleCommentSubmit = handleCommentSubmit;
+window.copyShareableLink = copyShareableLink;
+window.resetFilters = resetFilters;

@@ -1,6 +1,6 @@
 /**
  * DevScribe by Kanak - Core Application Engine (app.js)
- * Global State, Speech Synthesizer, Multi-Theme Engine, Markdown Parser & Persistence.
+ * Global State, Speech Synthesizer, Multi-Theme Engine, Markdown Parser & Dynamic Session Management.
  */
 
 // ============================================================================
@@ -100,10 +100,11 @@ VALUES ($1, $2, NOW())
 ON CONFLICT (event_id, consumer_id) DO NOTHING;
 \`\`\`
 
-### Key Architecture Checklist:
-- Always define schemas using Avro or Protobuf with strict backward compatibility rules.
-- Pair every message queue with an explicit Dead Letter Queue (DLQ) and exponential backoff retry jitter.`,
-    coverImage: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1100&q=80",
+### Hardened Production Checklist
+- Always version event schemas using Protocol Buffers or JSON Schema.
+- Implement exponential backoff jitter on consumer retries.
+- Isolate poison-pill payloads into an audited Dead Letter Queue (DLQ).`,
+    coverImage: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1100&q=80",
     author: {
       name: "Kanak",
       avatar: "assets/kanak.jpg",
@@ -112,44 +113,51 @@ ON CONFLICT (event_id, consumer_id) DO NOTHING;
     },
     status: "published",
     readTime: "6 min read",
-    createdAt: "2026-11-06T10:15:00Z",
+    createdAt: "2026-11-08T11:15:00Z",
     views: 5120,
-    reactions: { fire: 142, insight: 98, shipped: 41, relatable: 27 },
+    reactions: { fire: 142, insight: 98, shipped: 61, relatable: 35 },
     comments: [
-      { id: "c3", author: "Marcus Vance", text: "We suffered a retry storm last quarter. The exponential jitter advice here is spot on.", date: "2026-11-08T11:45:00Z" }
+      { id: "c3", author: "Rohan Verma", text: "Idempotency keys saved our transaction processor last quarter. Outstanding breakdown!", date: "2026-11-09T18:40:00Z" }
     ]
   },
   {
     id: "story-3",
-    title: "Modern CSS Architecture: Houdini, Custom Properties, and Subgrid in 2026",
-    slug: "modern-css-architecture-houdini-custom-properties",
+    title: "Modern CSS Architecture: Subgrid, Fluid Clamping & Luxury Dark Modes Without JavaScript",
+    slug: "modern-css-subgrid-clamping-dark-modes",
     category: "Modern CSS",
-    tags: ["CSS", "Frontend", "WebStandards", "DesignSystems"],
-    excerpt: "Exploring the bleeding edge of modern styling: typed CSS variables with @property, subgrid card alignment, and fluid typography formulas.",
-    content: `## Beyond Preprocessors
+    tags: ["CSS", "Frontend", "WebDesign", "Typography"],
+    excerpt: "Modern CSS has evolved past the era of heavy utility resets. Learn how CSS Grid subgrid, clamp() fluid typography, and relative color syntax build magazine-grade editorial layouts.",
+    content: `## The Renaissance of Native CSS
 
-The CSS specification has evolved dramatically. Today, features that previously required Sass, Less, or heavy CSS-in-JS abstractions are natively supported with superior runtime performance.
+Over the past three years, the web platform has received some of the most transformative layout and color capabilities in browser history. Many layouts that once required complex JavaScript resize listeners can now be implemented with two lines of native CSS.
 
-### Typed CSS Custom Properties with \`@property\`
-By declaring variable types and inheritance rules, the browser's render engine can now interpolate custom values smoothly:
+### 1. Fluid Typography with clamp()
+Say goodbye to dozens of breakpoint media queries:
 
 \`\`\`css
-@property --glow-angle {
-  syntax: '<angle>';
-  inherits: false;
-  initial-value: 0deg;
-}
-
-.animated-card-border {
-  background: conic-gradient(from var(--glow-angle), #10b981, #06b6d4, #10b981);
-  animation: rotateGlow 4s linear infinite;
+/* Smoothly scales from 1.1rem at 360px viewport to 2.4rem at 1440px */
+.editorial-headline {
+  font-size: clamp(1.1rem, 0.75rem + 1.8vw, 2.4rem);
+  letter-spacing: -0.03em;
+  line-height: 1.15;
 }
 \`\`\`
 
-### Fluid Typography without Breakpoints
-Using \`clamp()\` and viewport units, your font scales continuously between mobile and 4K displays:
+### 2. Perfect Card Grid Alignments with Subgrid
+Cards with variable-length titles, descriptions, and action rows can now align their internal elements across sibling columns seamlessly:
+
 \`\`\`css
-font-size: clamp(1rem, 0.8rem + 1vw, 1.5rem);
+.stories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-auto-rows: auto auto 1fr auto;
+}
+
+.story-card {
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-row: span 4;
+}
 \`\`\``,
     coverImage: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1100&q=80",
     author: {
@@ -159,44 +167,20 @@ font-size: clamp(1rem, 0.8rem + 1vw, 1.5rem);
       role: "Lead Engineer & Author"
     },
     status: "published",
-    readTime: "3 min read",
-    createdAt: "2026-11-03T18:00:00Z",
-    views: 2890,
-    reactions: { fire: 76, insight: 61, shipped: 18, relatable: 34 },
-    comments: []
+    readTime: "5 min read",
+    createdAt: "2026-11-05T09:00:00Z",
+    views: 4230,
+    reactions: { fire: 110, insight: 77, shipped: 45, relatable: 28 },
+    comments: [
+      { id: "c4", author: "Claire Dupont", text: "Subgrid finally fixes card button alignment! Beautiful article Kanak.", date: "2026-11-06T14:10:00Z" }
+    ]
   },
   {
     id: "story-4",
-    title: "Navigating Edge Cases in JavaScript Async/Await and the Microtask Queue",
-    slug: "edge-cases-async-await-microtasks",
+    title: "High-Throughput Binary Serialization: When to Pick gRPC vs REST in Node.js",
+    slug: "grpc-vs-rest-high-throughput-nodejs",
     category: "Deep Dives",
-    tags: ["JavaScript", "V8", "Async", "Performance"],
-    excerpt: "A deep dive into why Promise chaining order matters, unhandled rejections in loops, and how V8 prioritizes microtasks against requestAnimationFrame.",
-    content: `## The Underbelly of the Event Loop
-
-Most developers understand the distinction between the Call Stack, Macro-task Queue (setTimeout, setInterval), and Micro-task Queue (Promise.resolve, queueMicrotask). However, subtle memory leaks and UI stutter often stem from microtask starvation.
-
-When a loop continuously schedules microtasks within microtasks, the browser's render pipeline cannot execute DOM paints or handle user input events until the microtask queue empties completely.`,
-    coverImage: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1100&q=80",
-    author: {
-      name: "Kanak",
-      avatar: "assets/kanak.jpg",
-      handle: "@kanak_codes",
-      role: "Lead Engineer & Author"
-    },
-    status: "published",
-    readTime: "5 min read",
-    createdAt: "2026-10-28T09:00:00Z",
-    views: 1980,
-    reactions: { fire: 62, insight: 45, shipped: 12, relatable: 15 },
-    comments: []
-  },
-  {
-    id: "story-5",
-    title: "Draft: High-Throughput Microservices with Go and Protocol Buffers",
-    slug: "draft-microservices-go-protobuf",
-    category: "Architecture",
-    tags: ["Golang", "Microservices", "Protobuf", "Backend"],
+    tags: ["NodeJS", "gRPC", "Protobuf", "Performance"],
     excerpt: "Exploring low-overhead binary RPC protocols over HTTP/2 for latency-sensitive internal services.",
     content: `## Why gRPC Outperforms REST in Internal Clusters
 
@@ -218,16 +202,15 @@ When internal service-to-service communication exceeds 50,000 requests per secon
 ];
 
 // ============================================================================
-// 2. Storage Layer
+// 2. Storage Layer (Strict Authentication: Guest by Default)
 // ============================================================================
 const Storage = {
   init() {
     if (!localStorage.getItem("devscribe_stories")) {
       localStorage.setItem("devscribe_stories", JSON.stringify(SEED_STORIES));
     }
-    if (!localStorage.getItem("devscribe_user")) {
-      localStorage.setItem("devscribe_user", JSON.stringify(KANAK_USER));
-    }
+    // IMPORTANT: DO NOT automatically set devscribe_user!
+    // A visitor is strictly a guest until they manually log in or register.
     if (!localStorage.getItem("devscribe_theme")) {
       localStorage.setItem("devscribe_theme", "obsidian");
     }
@@ -271,22 +254,171 @@ const Storage = {
     return stories;
   },
 
+  /**
+   * Returns the currently logged in user object, or NULL if guest.
+   */
   getUser() {
-    this.init();
     try {
-      return JSON.parse(localStorage.getItem("devscribe_user")) || KANAK_USER;
+      const raw = localStorage.getItem("devscribe_user");
+      if (!raw) return null;
+      const user = JSON.parse(raw);
+      if (user && user.avatar && (user.avatar.includes('font-family="') || !user.avatar.includes('%3C') && user.avatar.includes('<svg'))) {
+        // Fix unencoded SVG avatar from earlier sessions
+        const initials = (user.name || "DS").trim().split(" ").filter(Boolean).map(p => p[0].toUpperCase()).slice(0, 2).join("");
+        const cleanSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#059669"/><stop offset="100%" stop-color="#10b981"/></linearGradient></defs><rect width="100" height="100" rx="50" fill="url(#g)"/><text x="50" y="58" font-family="sans-serif" font-size="38" font-weight="700" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">${initials || "DS"}</text></svg>`;
+        user.avatar = `data:image/svg+xml;utf8,${encodeURIComponent(cleanSvg)}`;
+        localStorage.setItem("devscribe_user", JSON.stringify(user));
+      }
+      return user;
     } catch (e) {
-      return KANAK_USER;
+      return null;
     }
   },
 
+  /**
+   * Save user session upon successful login or registration
+   */
   saveUser(user) {
-    localStorage.setItem("devscribe_user", JSON.stringify(user));
+    if (user) {
+      localStorage.setItem("devscribe_user", JSON.stringify(user));
+    } else {
+      localStorage.removeItem("devscribe_user");
+      localStorage.removeItem("devscribe_jwt_token");
+    }
+    updateNavbarAuth();
+  },
+
+  /**
+   * Sign out: clear session and tokens
+   */
+  clearUser() {
+    localStorage.removeItem("devscribe_user");
+    localStorage.removeItem("devscribe_jwt_token");
+    if (typeof Api !== "undefined" && Api.clearToken) {
+      Api.clearToken();
+    }
+    updateNavbarAuth();
   }
 };
 
+// Global sign out function
+window.logoutUser = function () {
+  Storage.clearUser();
+  showToast("You have been signed out.", "info");
+  setTimeout(() => {
+    window.location.href = "login.html";
+  }, 400);
+};
+
 // ============================================================================
-// 3. Global Markdown Parser & Code Snippet Copy (Available to all pages!)
+// 3. Dynamic Universal Navigation Engine (Guest vs Logged-In User)
+// ============================================================================
+function updateNavbarAuth() {
+  const user = Storage.getUser();
+  const navLinks = document.getElementById("nav-links");
+  const navControls = document.querySelector(".nav-controls");
+
+  // Determine current file
+  const fullPath = window.location.pathname.split("/").pop() || "index.html";
+  const currentPath = fullPath.split("?")[0].split("#")[0] || "index.html";
+
+  if (navLinks) {
+    if (!user) {
+      // --- GUEST STATE ---
+      navLinks.innerHTML = `
+        <li><a href="index.html" class="nav-link ${currentPath === 'index.html' || currentPath === '' ? 'active' : ''}">Home</a></li>
+        <li><a href="login.html" class="nav-link ${currentPath === 'login.html' ? 'active' : ''}">Sign In</a></li>
+        <li><a href="register.html" class="nav-link ${currentPath === 'register.html' ? 'active' : ''}">Register</a></li>
+      `;
+    } else {
+      // --- LOGGED-IN AUTHOR STATE ---
+      navLinks.innerHTML = `
+        <li><a href="index.html" class="nav-link ${currentPath === 'index.html' || currentPath === '' ? 'active' : ''}">Home</a></li>
+        <li><a href="dashboard.html" class="nav-link ${currentPath === 'dashboard.html' ? 'active' : ''}">Dashboard</a></li>
+        <li><a href="create-blog.html" class="nav-link ${currentPath === 'create-blog.html' ? 'active' : ''}">Write</a></li>
+      `;
+    }
+  }
+
+  // Update or inject User Capsule in nav controls
+  let userPill = document.getElementById("nav-user-pill");
+  let writeBtn = document.querySelector(".nav-write-btn");
+
+  if (!user) {
+    // If not logged in, remove user pill if present
+    if (userPill) userPill.remove();
+
+    // The +Write button prompts login
+    if (writeBtn) {
+      writeBtn.href = "login.html";
+      writeBtn.onclick = (e) => {
+        // Allow navigation to login
+      };
+    }
+  } else {
+    // If logged in, ensure user pill exists
+    if (!userPill && navControls) {
+      userPill = document.createElement("div");
+      userPill.id = "nav-user-pill";
+      userPill.className = "nav-user-pill";
+      // Insert before mobile menu toggle
+      const toggle = document.getElementById("mobile-menu-toggle");
+      if (toggle) {
+        navControls.insertBefore(userPill, toggle);
+      } else {
+        navControls.appendChild(userPill);
+      }
+    }
+
+    if (userPill) {
+      const avatarSrc = user.avatar || "assets/kanak.jpg";
+      const displayName = user.name || "Author";
+
+      userPill.innerHTML = "";
+      const capsule = document.createElement("div");
+      capsule.className = "user-capsule";
+      capsule.title = `Logged in as ${displayName}`;
+
+      const avatarImg = document.createElement("img");
+      avatarImg.className = "user-capsule-avatar";
+      avatarImg.alt = displayName;
+      avatarImg.src = avatarSrc;
+      avatarImg.onerror = function () {
+        this.src = "assets/kanak.jpg";
+        this.onerror = null;
+      };
+
+      const nameSpan = document.createElement("span");
+      nameSpan.className = "user-capsule-name";
+      nameSpan.textContent = displayName.split(" ")[0];
+
+      const logoutBtn = document.createElement("button");
+      logoutBtn.type = "button";
+      logoutBtn.className = "user-capsule-logout";
+      logoutBtn.title = "Sign Out";
+      logoutBtn.onclick = logoutUser;
+      logoutBtn.innerHTML = `
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+      `;
+
+      capsule.appendChild(avatarImg);
+      capsule.appendChild(nameSpan);
+      capsule.appendChild(logoutBtn);
+      userPill.appendChild(capsule);
+    }
+
+    if (writeBtn) {
+      writeBtn.href = "create-blog.html";
+    }
+  }
+}
+
+// ============================================================================
+// 4. Global Markdown Parser & Code Snippet Copy
 // ============================================================================
 function formatCustomMarkdown(md) {
   if (!md) return "";
@@ -294,7 +426,6 @@ function formatCustomMarkdown(md) {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
-    // Code blocks with one-click copy button
     .replace(/```([a-z]*)\n([\s\S]*?)```/g, (match, lang, code) => {
       return `
         <div class="code-snippet-box">
@@ -306,23 +437,18 @@ function formatCustomMarkdown(md) {
         </div>
       `;
     })
-    // Inline code
     .replace(/`([^`]+)`/g, '<code style="background: var(--bg-surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-family: monospace; color: #38bdf8;">$1</code>')
-    // Headings
     .replace(/^### (.*$)/gim, "<h3>$1</h3>")
     .replace(/^## (.*$)/gim, "<h2>$1</h2>")
     .replace(/^# (.*$)/gim, "<h1>$1</h1>")
-    // Bold & Italics
     .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
     .replace(/\*(.*?)\*/g, "<em>$1</em>")
-    // Lists
     .replace(/^\s*-\s+(.*$)/gim, "<li>$1</li>")
     .replace(/\n\s*\n/g, "</p><p>");
 
   return `<p>${html}</p>`;
 }
 
-// Global copy snippet handler
 window.copySnippet = function (btn) {
   const codeEl = btn.closest(".code-snippet-box").querySelector("code");
   if (codeEl) {
@@ -337,7 +463,7 @@ window.copySnippet = function (btn) {
 };
 
 // ============================================================================
-// 4. Safe Native Speech Synthesizer (No string quote crash bugs!)
+// 5. Safe Native Speech Synthesizer
 // ============================================================================
 let isSpeechPlaying = false;
 
@@ -351,22 +477,26 @@ window.handleStoryAudioById = function (storyId) {
     window.speechSynthesis.cancel();
     isSpeechPlaying = false;
     updateAudioButtonUI(false);
-    showToast("Audio paused.", "info", 1500);
+    showToast("Playback stopped.", "info");
     return;
   }
 
   const story = Storage.getStoryById(storyId);
-  if (!story) return;
+  if (!story) {
+    showToast("Article not found for audio playback.", "error");
+    return;
+  }
 
-  window.speechSynthesis.cancel();
-
-  const cleanText = (story.content || story.excerpt || "")
-    .replace(/[#*`_>-]/g, "")
-    .replace(/\n+/g, ". ");
-
-  const utterance = new SpeechSynthesisUtterance(`${story.title}. By Kanak. ${cleanText}`);
+  const cleanText = story.title + ". " + (story.content || "").replace(/[#*`_\[\]()>-]/g, " ");
+  const utterance = new SpeechSynthesisUtterance(cleanText);
   utterance.rate = 1.0;
   utterance.pitch = 1.0;
+
+  utterance.onstart = () => {
+    isSpeechPlaying = true;
+    updateAudioButtonUI(true);
+    showToast("Listening to story...", "success");
+  };
 
   utterance.onend = () => {
     isSpeechPlaying = false;
@@ -379,29 +509,33 @@ window.handleStoryAudioById = function (storyId) {
   };
 
   window.speechSynthesis.speak(utterance);
-  isSpeechPlaying = true;
-  updateAudioButtonUI(true);
-  showToast("🎧 Reading aloud via browser speech synthesizer...", "info", 2500);
 };
 
-function updateAudioButtonUI(speaking) {
-  const btn = document.getElementById("listen-audio-btn");
-  if (!btn) return;
-  if (speaking) {
-    btn.innerHTML = `
-      <span class="audio-play-icon" style="background: var(--color-danger);">⏹</span>
-      <span class="audio-text">Stop Audio</span>
-    `;
-  } else {
-    btn.innerHTML = `
-      <span class="audio-play-icon">▶</span>
-      <span class="audio-text">Listen to Story</span>
-    `;
+function updateAudioButtonUI(playing) {
+  const btn = document.getElementById("listen-story-btn");
+  if (btn) {
+    if (playing) {
+      btn.innerHTML = `
+        <span class="audio-wave-anim"><span></span><span></span><span></span></span>
+        <span>Stop Audio</span>
+      `;
+      btn.classList.add("playing");
+    } else {
+      btn.innerHTML = `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+        </svg>
+        <span>Listen to Story</span>
+      `;
+      btn.classList.remove("playing");
+    }
   }
 }
 
 // ============================================================================
-// 5. Multi-Theme & Accessibility Controls
+// 6. Multi-Theme & Accessibility Controls
 // ============================================================================
 const THEMES = [
   { id: "obsidian", name: "🌑 Obsidian" },
@@ -490,17 +624,7 @@ function initGlobalNav() {
       navLinks.classList.toggle("active");
     });
   }
-
-  // Safe path detection (stripping ?query and #hash)
-  const fullPath = window.location.pathname.split("/").pop() || "index.html";
-  const currentPath = fullPath.split("?")[0].split("#")[0] || "index.html";
-
-  document.querySelectorAll(".nav-link").forEach((link) => {
-    const href = link.getAttribute("href");
-    if (href === currentPath || (currentPath === "" && href === "index.html")) {
-      link.classList.add("active");
-    }
-  });
+  updateNavbarAuth();
 }
 
 function showToast(message, type = "info", duration = 3000) {

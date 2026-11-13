@@ -1,12 +1,21 @@
 /**
- * Kanak's DevChronicle - Editor Logic (editor.js)
- * Split-Screen Markdown Editor, Tags System, Toolbar Actions, and LocalStorage Persistence.
+ * DevScribe by Kanak - Editor Logic (editor.js)
+ * Connected to Node.js / Express.js REST API for creating and editing blog posts.
  */
 
 let storyTags = ["Architecture", "SystemDesign"];
 let activeEditStoryId = null;
 
 document.addEventListener("DOMContentLoaded", () => {
+  const user = Storage.getUser();
+  if (!user) {
+    showToast("Please sign in or create an account to write stories.", "info");
+    setTimeout(() => {
+      window.location.href = "login.html";
+    }, 400);
+    return;
+  }
+
   checkForEditMode();
   setupToolbar();
   setupTagsSystem();
@@ -17,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function checkForEditMode() {
   const urlParams = new URLSearchParams(window.location.search);
-  const editId = urlParams.get("edit");
+  const editId = urlParams.get("edit") || urlParams.get("id");
   if (!editId) return;
 
   const story = Storage.getStoryById(editId);
@@ -234,7 +243,10 @@ function setupViewModeToggle() {
   });
 }
 
-function handleSaveStory(status = "published") {
+// ============================================================================
+// Create Blog API Connection (POST /api/posts & PUT /api/posts/:id)
+// ============================================================================
+async function handleSaveStory(status = "published") {
   const title = document.getElementById("story-title").value.trim();
   const category = document.getElementById("story-category").value;
   const excerpt = document.getElementById("story-excerpt").value.trim();
@@ -263,10 +275,8 @@ function handleSaveStory(status = "published") {
   const words = content.split(/\s+/).length;
   const readTime = `${Math.max(1, Math.ceil(words / 200))} min read`;
 
-  const newStory = {
-    id: activeEditStoryId || "story-" + Date.now(),
+  const storyPayload = {
     title: title,
-    slug: title.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
     category: category,
     tags: storyTags.length > 0 ? storyTags : ["Engineering"],
     excerpt: excerpt || content.substring(0, 140) + "...",
@@ -276,20 +286,50 @@ function handleSaveStory(status = "published") {
       name: author.name || "Kanak",
       avatar: author.avatar || "assets/kanak.jpg",
       handle: author.handle || "@kanak_codes",
-      role: "Lead Engineer & Author"
+      role: "Lead Author"
     },
     status: status,
-    readTime: readTime,
-    createdAt: (existing && existing.createdAt) || new Date().toISOString(),
-    views: (existing && existing.views) || 0,
-    reactions: (existing && existing.reactions) || { fire: 0, insight: 0, shipped: 0, relatable: 0 },
-    comments: (existing && existing.comments) || []
+    readTime: readTime
   };
 
-  Storage.saveStory(newStory);
+  showToast("Saving story via Express REST API...", "info", 1500);
 
-  showToast(status === "draft" ? "Saved as draft! 📝" : "Story published to DevChronicle! 🚀", "success");
+  try {
+    let savedStory;
+    if (activeEditStoryId) {
+      // PUT /api/posts/:id
+      const res = await Api.updatePost(activeEditStoryId, storyPayload);
+      savedStory = res.post;
+    } else {
+      // POST /api/posts
+      const res = await Api.createPost(storyPayload);
+      savedStory = res.post;
+    }
+
+    if (savedStory) {
+      Storage.saveStory(savedStory);
+      showToast(status === "draft" ? "Draft saved via Express API!" : "Story published to Express Backend! 🚀", "success");
+    }
+  } catch (err) {
+    console.warn("API save failed, saving to local storage:", err.message);
+    const localStory = {
+      id: activeEditStoryId || "story-" + Date.now(),
+      ...storyPayload,
+      createdAt: (existing && existing.createdAt) || new Date().toISOString(),
+      views: (existing && existing.views) || 0,
+      reactions: (existing && existing.reactions) || { fire: 0, insight: 0, shipped: 0, relatable: 0 },
+      comments: (existing && existing.comments) || []
+    };
+    Storage.saveStory(localStory);
+    showToast(status === "draft" ? "Saved as draft (Local Mode)!" : "Story published (Local Mode)! 🚀", "success");
+  }
+
   setTimeout(() => {
     window.location.href = status === "draft" ? "dashboard.html" : "index.html";
   }, 750);
 }
+
+// Window exports for inline HTML onclick handlers
+window.handleSaveStory = handleSaveStory;
+window.applyCoverPreset = applyCoverPreset;
+window.removeTag = removeTag;

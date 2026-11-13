@@ -19,7 +19,7 @@ try {
 }
 
 Write-Host "==========================================================" -ForegroundColor Cyan
-Write-Host "  TechPulse Blog Application Local Server Started!        " -ForegroundColor Green
+Write-Host "  DevScribe Engineering Publication (by Kanak) Started!   " -ForegroundColor Green
 Write-Host "  Server URL: $prefix" -ForegroundColor Yellow
 Write-Host "  Serving from: $baseDir" -ForegroundColor Gray
 Write-Host "  Press Ctrl+C to stop the server" -ForegroundColor Magenta
